@@ -79,7 +79,7 @@ def pmt(rate=None, nper=None, pv=None, fv=0, beg=False,rounded=2):
 
     Given:
      * a present value, `pv` (e.g., an amount borrowed)
-     * a future value, `fv` (e.g., 0)
+     * a future value, `fv` (e.g., 0) NOT WORKING
      * an interest `rate` compounded once per period, of which
        there are
      * `nper` total
@@ -98,7 +98,8 @@ def pmt(rate=None, nper=None, pv=None, fv=0, beg=False,rounded=2):
     fv : Future value (default = 0)
     beg : True or False When payments are due ('begin' (True) or 'end' (False))
     """
-
+    # formula that I could not get to work
+    #=====================================
     # fv +
     # pv*(1 + rate)**nper +
     # pmt*(1 + rate*beg)/rate*((1 + rate)**nper - 1) == 0
@@ -107,18 +108,34 @@ def pmt(rate=None, nper=None, pv=None, fv=0, beg=False,rounded=2):
     if rate==0:
         pmt = ((-1*fv)/nper)-(pv/nper)
     else:
-        print 'rate=',rate
-        print 'nper=',nper
-        print 'pv = ',pv
-        print 'fv = ',fv
-        x = (rate*((1 + rate)**nper - 1))/(1 + rate*beg)
-        pmt1 = (-1*fv)*x - (pv*(1 + rate)**nper)*x
-        
-        
-        pmt = (((-1*fv) * rate*((1 + rate)**nper - 1)) / (1 + rate*beg)) - ((pv*(1 + rate)**nper * rate*((1 + rate)**nper - 1)) / (1 + rate*beg))
-        
-        print pmt, pmt1
+        # The formula is M = P * ( J / (1 - (1 + J)^ -N)).
+        # M: monthly payment
+        # P: principal or amount of loan
+        # J: monthly interest; annual interest divided by 100, then divided by 12.
+        # N: number of months of amortization, determined by length in years of loan.
+        pmt = (pv * (rate/(1-(1 + rate)**-nper)/(1 + rate*beg)) * -1)
     return round(pmt,rounded)
+
+def nper(rate=None, pmt=None, pv=None, fv=0.0, beg=True):
+    """
+    The number of periods ``nper`` is computed by solving the equation::
+     fv + pv*(1+rate)**nper + pmt*(1+rate*when)/rate*((1+rate)**nper-1) = 0
+    but if ``rate = 0`` then::
+     fv + pv + pmt*nper = 0
+    """
+    if rate==0:
+        pass
+        #fv + pv + pmt*nper = 0
+        
+    else:
+        pass
+        #fv + pv*(1+rate)**nper + pmt*(1+rate*beg)/rate*((1+rate)**nper-1)==0
+        
+        # ignore below for the moment . . please solve the above 2 equations for nper using natural logs (log)
+        #        Log(M) - Log(M - PR/12)
+        #N = ---------------------------------
+        #                  Log(1 + R/12)
+    
 
 def calculatedaysbetween2dates(fromdate,todate):
     from_dt_obj = datetime.strptime(fromdate, "%Y-%m-%d")
@@ -146,6 +163,8 @@ if __name__ == '__main__':
     printf(pv(rate=.03/12, nper=10*12, pmt=-100, beg=False,fv=15692.93) , -1273.79)
     printf(pv(rate=.0/12, nper=10*12, pmt=-100, beg=False,fv=15692.93) , -3692.93)
     printf(npv(rate=.05/12,pmts=[-100]*120), 9428.14)
-    
+
     printf(calculatedaysbetween2dates('2008-08-18','2008-09-26'), -39)
+    printf(pmt(rate=.075/12, nper=15*12, pv=20000, beg=False) , -185.40)
     printf(pmt(rate=.075/12, nper=15*12, pv=20000, beg=True) , -184.25)
+    
