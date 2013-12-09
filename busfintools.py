@@ -126,7 +126,7 @@ def nper(rate=None, pmt=None, pv=None, fv=0.0, beg=True):
     if rate==0:
         pass
         #fv + pv + pmt*nper = 0
-        
+        nper = (-fv/pmt) + (-pv/pmt)
     else:
         pass
         #fv + pv*(1+rate)**nper + pmt*(1+rate*beg)/rate*((1+rate)**nper-1)==0
