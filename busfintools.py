@@ -73,7 +73,7 @@ def fv(rate=None, nper=None, pmt=None, pv=0.0, beg=True, rounded=2):
     return round(fv,rounded)
 
 
-def pmt(rate=None, nper=None, pv=None, fv=0, beg=False,rounded=2):
+def pmt(rate=None, nper=None, pv=None, fv=0.0, beg=False,rounded=2):
     """
     Compute the payment against loan principal plus interest.
 
@@ -104,13 +104,13 @@ def pmt(rate=None, nper=None, pv=None, fv=0, beg=False,rounded=2):
     # pmt*(1 + rate*beg)/rate*((1 + rate)**nper - 1) == 0
     
     
+    
+    
     if rate==0:
         pmt = ((-1*fv)/nper)-(pv/nper)
     else:
-        x = (rate*((1 + rate)**nper - 1))/(1 + rate*beg)
-        pmt1 = (-1*fv)*x - (pv*(1 + rate)**nper)*x
         pmt = (((-1*fv)/(1 + rate*beg))*(rate*((1 + rate)**nper - 1))) - (((pv*(1 + rate)**nper)/(1 + rate*beg))*(rate*((1 + rate)**nper - 1)))
-        print pmt, pmt1
+
     return round(pmt,rounded)
 
 def calculatedaysbetween2dates(fromdate,todate):
@@ -141,4 +141,4 @@ if __name__ == '__main__':
     printf(npv(rate=.05/12,pmts=[-100]*120), 9428.14)
     
     printf(calculatedaysbetween2dates('2008-08-18','2008-09-26'), -39)
-    printf(pmt(rate=.075/12, nper=15*12, pv=20000, beg=False) , -1854.02)
+    printf(pmt(rate=.075/12, nper=15*12, pv=20000, beg=Falses) , -184.25)
