@@ -107,9 +107,16 @@ def pmt(rate=None, nper=None, pv=None, fv=0, beg=False,rounded=2):
     if rate==0:
         pmt = ((-1*fv)/nper)-(pv/nper)
     else:
+        print 'rate=',rate
+        print 'nper=',nper
+        print 'pv = ',pv
+        print 'fv = ',fv
         x = (rate*((1 + rate)**nper - 1))/(1 + rate*beg)
         pmt1 = (-1*fv)*x - (pv*(1 + rate)**nper)*x
-        pmt = (((-1*fv)/(1 + rate*beg))*(rate*((1 + rate)**nper - 1))) - (((pv*(1 + rate)**nper)/(1 + rate*beg))*(rate*((1 + rate)**nper - 1)))
+        
+        
+        pmt = (((-1*fv) * rate*((1 + rate)**nper - 1)) / (1 + rate*beg)) - ((pv*(1 + rate)**nper * rate*((1 + rate)**nper - 1)) / (1 + rate*beg))
+        
         print pmt, pmt1
     return round(pmt,rounded)
 
@@ -141,4 +148,4 @@ if __name__ == '__main__':
     printf(npv(rate=.05/12,pmts=[-100]*120), 9428.14)
     
     printf(calculatedaysbetween2dates('2008-08-18','2008-09-26'), -39)
-    printf(pmt(rate=.075/12, nper=15*12, pv=20000, beg=False) , -1854.02)
+    printf(pmt(rate=.075/12, nper=15*12, pv=20000, beg=True) , -184.25)
