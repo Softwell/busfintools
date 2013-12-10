@@ -8,7 +8,7 @@ Copyright (c) 2013 Softwell Pty Ltd. All rights reserved.
 """
 
 from datetime import datetime
-import math
+from math import log
 
 
 def pv(rate=None, nper=None, pmt=None, fv=0.0, beg=False,rounded=2):
@@ -116,7 +116,7 @@ def pmt(rate=None, nper=None, pv=None, fv=0, beg=False,rounded=2):
         pmt = (pv * (rate/(1-(1 + rate)**-nper)/(1 + rate*beg)) * -1)
     return round(pmt,rounded)
 
-def nper(rate=None, pmt=None, pv=None, fv=0.0, beg=True):
+def nper(rate=None, pmt=None, pv=None, fv=0.0, beg=True,rounded=0):
     """
     The number of periods ``nper`` is computed by solving the equation::
      fv + pv*(1+rate)**nper + pmt*(1+rate*when)/rate*((1+rate)**nper-1) = 0
@@ -124,18 +124,13 @@ def nper(rate=None, pmt=None, pv=None, fv=0.0, beg=True):
      fv + pv + pmt*nper = 0
     """
     if rate==0:
-        pass
-        #fv + pv + pmt*nper = 0
-        
+        nper = -1*(fv/pmt) - (pv/pmt)
     else:
-        pass
-        #fv + pv*(1+rate)**nper + pmt*(1+rate*beg)/rate*((1+rate)**nper-1)==0
-        
-        # ignore below for the moment . . please solve the above 2 equations for nper using natural logs (log)
-        #        Log(M) - Log(M - PR/12)
-        #N = ---------------------------------
-        #                  Log(1 + R/12)
-    
+        nper =  (log(pmt) - log(pmt - pv * rate)) / log(1 + rate)
+        nper = round(nper,rounded)
+        if rounded==0:
+            nper = int(nper)
+        return nper
 
 def calculatedaysbetween2dates(fromdate,todate):
     from_dt_obj = datetime.strptime(fromdate, "%Y-%m-%d")
@@ -145,9 +140,9 @@ def calculatedaysbetween2dates(fromdate,todate):
 
 def printf(a, b):
 
-    print '%s  %0.2f ==> %0.2f' %(a==b, a, b)
+    print a==b,'  ',a,' ==> ',b
 if __name__ == '__main__':
-    
+
     printf(fv(rate=.05, nper=5, pmt=-1000, beg=False),5525.63)
     printf(fv(rate=.05, nper=5, pmt=-1000, beg=True), 5801.91)
     printf(fv(rate=.05/12, nper=10*12, pmt=-100, beg=False,pv=12000), -4235.89)
@@ -167,4 +162,6 @@ if __name__ == '__main__':
     printf(calculatedaysbetween2dates('2008-08-18','2008-09-26'), -39)
     printf(pmt(rate=.075/12, nper=15*12, pv=20000, beg=False) , -185.40)
     printf(pmt(rate=.075/12, nper=15*12, pv=20000, beg=True) , -184.25)
+    
+    printf(nper(rate = .05/12, pmt=100, pv=20000),431)
     
