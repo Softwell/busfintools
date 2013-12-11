@@ -114,6 +114,14 @@ def pmt(rate=None, nper=None, pv=None, fv=0, beg=False,rounded=2):
         # J: monthly interest; annual interest divided by 100, then divided by 12.
         # N: number of months of amortization, determined by length in years of loan.
         pmt = (pv * (rate/(1-(1 + rate)**-nper)/(1 + rate*beg)) * -1)
+        
+        # z = pmt*(1.0+rate*beg)/rate
+        # A = -(fv + pv)/(pmt+0.0)
+        # B = np.log((-fv+z) / (pv+z))/np.log(1.0+rate)
+        # miter = np.broadcast(rate, pmt, pv, fv, when)
+        # zer = np.zeros(miter.shape)
+        # return np.where(rate==zer, A+zer, B+zer) + 0.0
+        
     return round(pmt,rounded)
 
 def nper(rate=None, pmt=None, pv=None, fv=0.0, beg=True,rounded=0):
